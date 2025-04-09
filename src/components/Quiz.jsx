@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import quizCompleteImg from '../assets/quiz-complete.png';
 import QUESTIONS from '../questions.js';
 import QuestionTimer from "./QuestionTimer.jsx";
@@ -30,19 +30,29 @@ export default function Quiz() {
      */
     shuffledAnswers.sort(() => Math.random() - 0.5);
 
-
-    function handleSelectAnswer(selectedAnswer) {
+    /**
+     * We do not need to add any dependencies here, because it does not use any state, props or any other values that depend on state or props.
+     */
+    const handleSelectAnswer = useCallback(function handleSelectAnswer(selectedAnswer) {
         setUserAnswers(previousUserAnswers => {
             return [...previousUserAnswers, selectedAnswer];
         });
-    }
+    }, []);
+
+    /**
+     * {@link QuestionTimer} onTimeout function causes an infinite loop.
+     * Functions in JavaScript are objects and every time this function is executed, a new object is created.
+     * For this reason we need to use useCallback.
+     * Since handleSelectAnswer is the dependency here, we need to use useEffect to handleSelectAnswer also.
+     */
+    const handleSkipAnswer = useCallback(() => handleSelectAnswer(null), [handleSelectAnswer]);
 
     return (
         <div id="quiz">
             <div id="question">
                 <QuestionTimer
                     timeout={10000}
-                    onTimeout={() => handleSelectAnswer(null)}
+                    onTimeout={handleSkipAnswer}
                 />
                 <h2>{QUESTIONS[activeQuestionIndex].text}</h2>
                 <ul id="answers">
