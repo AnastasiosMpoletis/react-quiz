@@ -51,6 +51,8 @@ export default function Quiz() {
         <div id="quiz">
             <div id="question">
                 <QuestionTimer
+                    // whenever the key value (activeQuestionIndex) changes, React will destroy the old component instance and create a new one.
+                    key={activeQuestionIndex}
                     timeout={10000}
                     onTimeout={handleSkipAnswer}
                 />
