@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import quizCompleteImg from '../assets/quiz-complete.png';
+import Summary from "./Summary.jsx";
 import QUESTIONS from '../questions.js';
 import Question from "./Question.jsx";
 
@@ -11,15 +11,6 @@ export default function Quiz() {
      */
     const activeQuestionIndex = userAnswers.length;
     const quizIsComplete = QUESTIONS.length === activeQuestionIndex;
-
-    if (quizIsComplete) {
-        return (
-            <div id="summary">
-                <img src={quizCompleteImg} alt="Trophy icon" />
-                <h2>Quiz completed!</h2>
-            </div>
-        );
-    }
 
     /**
      * We do not need to add any dependencies here, because it does not use any state, props or any other values that depend on state or props.
@@ -37,6 +28,12 @@ export default function Quiz() {
      * Since handleSelectAnswer is the dependency here, we need to use useEffect to handleSelectAnswer also.
      */
     const handleSkipAnswer = useCallback(() => handleSelectAnswer(null), [handleSelectAnswer]);
+
+    if (quizIsComplete) {
+        return (
+            <Summary userAnswers={userAnswers} />
+        );
+    }
 
     return (
         <div id="quiz">
